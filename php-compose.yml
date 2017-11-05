@@ -8,10 +8,10 @@ services:
             IS_DEV_MODE: 1
         environment:
           - DB_HOST=mysql
+          - DB_PORT=3306
           - MYSQL_PASSWORD=root
-          - MYSQL_USER=joe
+          - MYSQL_USER=root
           - MYSQL_DATABASE=joe
-          - MYSQL_PASSWORD=joe
           - APPLICATION_LIVE=1
           - API_DOMAIN=lumen.local
           - APP_DEBUG=1
