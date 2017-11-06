@@ -1,5 +1,16 @@
 <?php
-
+$sentinels = env('SENTINELS', '');
+$sentinels = explode(',', $sentinels);
+$sentinels = array_map(
+    function ($string) {
+        $parts = explode(':', $string);
+        return [
+            'host' => $parts[0],
+            'port' => $parts[1],
+        ];
+    },
+    $sentinels
+);
 return [
 
     /*
@@ -75,16 +86,20 @@ return [
     */
 
     'redis' => [
-
         'client' => 'predis',
-
-        'default' => [
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'password' => env('REDIS_PASSWORD', null),
-            'port' => env('REDIS_PORT', 6379),
-            'database' => 0,
-        ],
-
+        'nodeSetName'      => env('SENTINEL_NODE_SET_NAME', 'mymaster'),
+        /** Array of sentinels */
+        'clusters'          => false,
+        'masters'           => $sentinels,
+        /** how long to wait and try again if we fail to connect to master */
+        'backoff-strategy' => [
+            'max-attempts' => env('SENTINEL_MAX_ATTEMPTS', 10),
+            // the maximum-number of attempt possible to find master
+            'wait-time'    => env('SENTINEL_WAIT_TIME', 500),
+            // miliseconds to wait for the next attempt
+            'increment'    => env('SENTINEL_INCREMENT', 1.5),
+            // multiplier used to increment the back off time on each try
+        ]
     ],
 
 ];
